@@ -1,0 +1,39 @@
+.input-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5rem;
+	background-color: #f3f3f3;
+	border-top: 1px solid #e0e0e0;
+}
+
+.user-input {
+	resize: none;
+	width: 100%;
+	max-width: 600px;
+	padding: 0.5rem;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	font-size: 1rem;
+	outline: none;
+	&:focus {
+		border-color: #007bff;
+	}
+}
+
+.send-button {
+	margin-left: 0.5rem;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	border-radius: 5px;
+	border: 1px solid #007bff;
+	background-color: #007bff;
+	color: #fff;
+	cursor: pointer;
+	transition: background-color 0.3s, border-color 0.3s;
+
+	&:hover {
+		background-color: #0056b3;
+		border-color: #0056b3;
+	}
+}

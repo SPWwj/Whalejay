@@ -1,0 +1,37 @@
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	// Add a linear gradient background for a softer appearance
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.app {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	overflow: hidden;
+}
+
+.navbar {
+	height: 60px;
+	// Add your navbar styles
+}
+
+.content {
+	height: calc(100% - 100px);
+	padding: 3rem;
+
+	overflow-y: auto;
+	// Add a soft edge to the content container by adding a box-shadow
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+	// Add your content styles
+}
+
+.footer {
+	height: 40px;
+	// Add your footer styles
+}
