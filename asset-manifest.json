@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/Whalejay/static/css/main.0bca71e0.css",
-    "main.js": "/Whalejay/static/js/main.95070411.js",
+    "main.js": "/Whalejay/static/js/main.e7a4cd36.js",
     "static/js/787.66f3dcfd.chunk.js": "/Whalejay/static/js/787.66f3dcfd.chunk.js",
     "static/media/app-image.png": "/Whalejay/static/media/app-image.1971b6d46316debb9567.png",
     "static/media/user-image.png": "/Whalejay/static/media/user-image.617e18de427ad50e276b.png",
     "index.html": "/Whalejay/index.html",
     "main.0bca71e0.css.map": "/Whalejay/static/css/main.0bca71e0.css.map",
-    "main.95070411.js.map": "/Whalejay/static/js/main.95070411.js.map",
+    "main.e7a4cd36.js.map": "/Whalejay/static/js/main.e7a4cd36.js.map",
     "787.66f3dcfd.chunk.js.map": "/Whalejay/static/js/787.66f3dcfd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0bca71e0.css",
-    "static/js/main.95070411.js"
+    "static/js/main.e7a4cd36.js"
   ]
 }
