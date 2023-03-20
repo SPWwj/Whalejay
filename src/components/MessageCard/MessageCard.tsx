@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import "./MessageCard.scss";
 
 export enum MessageType {
@@ -12,6 +12,7 @@ interface MessageCardProps {
 	className?: string;
 	name: string;
 	imageSrc: string;
+	additionalContent?: ReactNode;
 }
 
 const MessageCard: React.FC<MessageCardProps> = ({
@@ -20,6 +21,7 @@ const MessageCard: React.FC<MessageCardProps> = ({
 	className,
 	name,
 	imageSrc,
+	additionalContent,
 }) => {
 	const messageClass =
 		type === MessageType.User ? "message-card--user" : "message-card--app";
@@ -31,6 +33,11 @@ const MessageCard: React.FC<MessageCardProps> = ({
 				<span className="message-card__name">{name}</span>
 				<p className="message-card__text">{message}</p>
 			</div>
+			{additionalContent && (
+				<div className="message-card__additional-content">
+					{additionalContent}
+				</div>
+			)}
 		</div>
 	);
 };

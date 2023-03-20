@@ -1,7 +1,7 @@
 {
 	"name": "whalejay",
 	"version": "0.1.0",
-	"homepage": "https://spwwj.github.io/Whalejay/",
+	"homepage": "https://whalejay.com/",
 	"private": true,
 	"dependencies": {
 		"@testing-library/jest-dom": "^5.16.5",
@@ -22,11 +22,12 @@
 	},
 	"scripts": {
 		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"add-domain": "echo whalejay.com > ./build/CNAME",
+		"deploy": "npm run add-domain && gh-pages -d build"
 	},
 	"eslintConfig": {
 		"extends": [

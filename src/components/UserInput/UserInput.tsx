@@ -22,8 +22,8 @@ const UserInput: React.FC<UserInputProps> = ({
 	};
 
 	const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault(); // Prevent adding a new line
+		if (event.key === "Enter") {
+			event.preventDefault();
 			handleButtonClick();
 		}
 	};

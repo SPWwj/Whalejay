@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b8b0b60-5c49-49dc-991f-730e5d007e35" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/app-image.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/user-image.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App/App.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/App/App.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserInput/UserInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserInput/UserInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Main/Main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Main/Main.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="1b8b0b60-5c49-49dc-991f-730e5d007e35" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,6 +54,7 @@
       <updated>1679231558282</updated>
       <workItem from="1679231559521" duration="652000" />
       <workItem from="1679238590001" duration="795000" />
+      <workItem from="1679295162136" duration="8000" />
     </task>
     <servers />
   </component>
