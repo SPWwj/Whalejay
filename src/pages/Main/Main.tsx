@@ -4,6 +4,9 @@ import MessageCard, {
 	MessageType,
 } from "../../components/MessageCard/MessageCard";
 import "./Main.scss";
+import userImage from "../../assets/images/user-image.png";
+import appImage from "../../assets/images/app-image.png";
+
 interface ChatMessage {
 	type: MessageType;
 	text: string;
@@ -51,11 +54,7 @@ const Main: React.FC = () => {
 								isLatestMessage(index, msg.type) ? "latest-message" : ""
 							}
 							name={msg.type === MessageType.User ? "User" : "App"}
-							imageSrc={
-								msg.type === MessageType.User
-									? "/images/user-image.png"
-									: "/images/app-image.png"
-							}
+							imageSrc={msg.type === MessageType.User ? userImage : appImage}
 						/>
 					))}
 				</div>

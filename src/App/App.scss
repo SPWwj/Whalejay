@@ -6,8 +6,15 @@ body,
 	padding: 0;
 	// Add a linear gradient background for a softer appearance
 	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	cursor: url("/assets/images/cursor/cursor_32.png") 16 16, auto;
 }
-
+button:hover {
+	cursor: url("/assets/images/cursor/tap_32.png") 16 16, auto;
+}
+input,
+textarea {
+	cursor: url("/assets/images/cursor/cursor_text_32.png"), auto;
+}
 .app {
 	height: 100%;
 	display: flex;

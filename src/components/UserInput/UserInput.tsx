@@ -21,6 +21,13 @@ const UserInput: React.FC<UserInputProps> = ({
 		setMessage("");
 	};
 
+	const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault(); // Prevent adding a new line
+			handleButtonClick();
+		}
+	};
+
 	return (
 		<div className="input-container">
 			<textarea
@@ -28,6 +35,7 @@ const UserInput: React.FC<UserInputProps> = ({
 				placeholder={placeholder}
 				value={message}
 				onChange={handleInputChange}
+				onKeyDown={handleKeyPress}
 			/>
 			<button className="send-button" onClick={handleButtonClick}>
 				Send
