@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserInput from "../../components/UserInput/UserInput";
 import MessageCard, {
 	MessageType,
@@ -32,15 +32,14 @@ const Main: React.FC = () => {
 		// Update the messages state with the new user message
 
 		setMessages((prevMessages) => [
-			{ type: MessageType.User, text: message },
 			...prevMessages,
+			{ type: MessageType.User, text: message },
 		]);
 		let appReply: ChatMessage;
 		// Check if the user typed "Show image"
+		const imageUrl =
+			"https://pm1.narvii.com/6190/2e8c00ca75684e3396fa0fad4da308f3a6cf9451_hq.jpg"; // Replace with a valid image URL
 		if (message.toLowerCase() === "show image") {
-			const imageUrl =
-				"https://pm1.narvii.com/6190/2e8c00ca75684e3396fa0fad4da308f3a6cf9451_hq.jpg"; // Replace with a valid image URL
-
 			// Add an app reply with the image URL as additional information
 			appReply = {
 				type: MessageType.App,
@@ -56,30 +55,39 @@ const Main: React.FC = () => {
 			appReply = {
 				type: MessageType.App,
 				text: appFeedback ?? "Command not recognized",
+				additionalInfo: {
+					type: "text",
+					content: "你好",
+				},
 			};
 		}
 
 		setTimeout(() => {
-			setMessages((prevMessages) => [appReply, ...prevMessages]);
+			setMessages((prevMessages) => [...prevMessages, appReply]);
 		}, 0.2);
 	};
 	const isLatestMessage = (index: number, type: MessageType) => {
-		const latestIndexForType = messages.findIndex((msg) => msg.type === type);
-		if (type === MessageType.App) {
-			const latestUserIndex = messages.findIndex(
-				(msg) => msg.type === MessageType.User
-			);
-			return (
-				index === latestIndexForType && latestIndexForType < latestUserIndex
-			);
-		}
-		return index === latestIndexForType;
+		const latestIndexForType = messages
+			.slice()
+			.reverse()
+			.findIndex((msg) => msg.type === type);
+		const totalCount = messages.length;
+		return totalCount - index - 1 === latestIndexForType;
 	};
+	const chatContainerRef = React.useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
+		}
+	}, [messages]);
+
 	return (
 		<div className="page page--main">
 			<div className="page-content">
 				{/* ... */}
-				<div className="chat-container">
+				<div ref={chatContainerRef} className="chat-container">
 					{messages.map((msg, index) => (
 						<React.Fragment key={index}>
 							<MessageCard
@@ -95,13 +103,13 @@ const Main: React.FC = () => {
 								<img
 									src={msg.additionalInfo.content}
 									alt="Additional info"
-									style={{
-										maxWidth: "100%",
-										maxHeight: "200px",
-										alignSelf: "flex-start",
-										margin: "0.5rem",
-									}}
+									className="additional-content additional-content__image"
 								/>
+							)}
+							{msg.additionalInfo && msg.additionalInfo.type === "text" && (
+								<div className="additional-content additional-content__text">
+									{msg.additionalInfo.content}
+								</div>
 							)}
 						</React.Fragment>
 					))}

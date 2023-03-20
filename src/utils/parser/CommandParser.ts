@@ -4,6 +4,7 @@ import { AddTaskCommand } from "../commands/AddTaskCommand ";
 import { AssignPersonCommand } from "../commands/AssignPersonCommand";
 import { AssignTaskCommand } from "../commands/AssignTaskCommand";
 import { Command } from "../commands/Command";
+import HelpCommand from "../commands/HelpCommand";
 import { ListAllCommand } from "../commands/ListAllCommand";
 import { ListAssignPersonCommand } from "../commands/ListAssignPersonCommand";
 import { ListAssignTaskCommand } from "../commands/ListAssignTaskCommand";
@@ -81,6 +82,9 @@ export default class CommandParser {
         const sortOrder = order === "-o" ? tokens.shift()?.toLowerCase() : "asc";
         return new ListUnassignPersonCommand(sortOrder || "asc");
       }
+
+    } else if (command === "help") {
+      return new HelpCommand();
     }
 
     return null;
