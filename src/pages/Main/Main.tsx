@@ -41,12 +41,12 @@ const Main: React.FC = () => {
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			type: MessageType.App,
-			text: "Welcome to our app! How can we help you today?",
+			text: "正在唤醒中。。。请等候头像变化。",
 		},
 	]);
 	const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
-	const url = "https://whalejaywei.azurewebsites.net";
+	const url = "https://bitflow.azurewebsites.net";
 
 	useEffect(() => {
 		const checkWebsiteStatus = async () => {
@@ -71,8 +71,15 @@ const Main: React.FC = () => {
 		}
 	}, [messages]);
 	if (isAlive === true) {
-		console.log("Not alive site");
-
+		const appReply: ChatMessage = {
+			type: MessageType.App,
+			text: "我睡醒了，有什么事吗？",
+			// additionalInfo: {
+			// 	type: "image",
+			// 	content: imageUrl,
+			// },
+		};
+		setMessages((prevMessages) => [...prevMessages, appReply]);
 		// return <p>Checking website status...</p>;
 	}
 	// const commandParser = new CommandParser();
@@ -93,10 +100,10 @@ const Main: React.FC = () => {
 			const appReply: ChatMessage = {
 				type: MessageType.App,
 				text: "还没醒，先等等~",
-				additionalInfo: {
-					type: "image",
-					content: imageUrl,
-				},
+				// additionalInfo: {
+				// 	type: "image",
+				// 	content: imageUrl,
+				// },
 			};
 			setMessages((prevMessages) => [...prevMessages, appReply]);
 		} else if (message.toLowerCase() === "show image") {
@@ -113,9 +120,7 @@ const Main: React.FC = () => {
 		} else {
 			try {
 				const response = await fetch(
-					`https://whalejaywei.azurewebsites.net/chatgpt/${encodeURIComponent(
-						message
-					)}`
+					`${url}/chatgpt/${encodeURIComponent(message)}`
 				);
 				console.log(response);
 
