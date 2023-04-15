@@ -54,6 +54,15 @@ const Main: React.FC = () => {
 			if (result) {
 				setIsAlive(true);
 				clearInterval(intervalId); // Clear the interval when the website is alive
+				const appReply: ChatMessage = {
+					type: MessageType.App,
+					text: "我睡醒了，有什么事吗？",
+					// additionalInfo: {
+					// 	type: "image",
+					// 	content: imageUrl,
+					// },
+				};
+				setMessages((prevMessages) => [...prevMessages, appReply]);
 			}
 		};
 
@@ -70,18 +79,7 @@ const Main: React.FC = () => {
 				chatContainerRef.current.scrollHeight;
 		}
 	}, [messages]);
-	if (isAlive === true) {
-		const appReply: ChatMessage = {
-			type: MessageType.App,
-			text: "我睡醒了，有什么事吗？",
-			// additionalInfo: {
-			// 	type: "image",
-			// 	content: imageUrl,
-			// },
-		};
-		setMessages((prevMessages) => [...prevMessages, appReply]);
-		// return <p>Checking website status...</p>;
-	}
+
 	// const commandParser = new CommandParser();
 
 	const handleSendMessage = async (message: string) => {
