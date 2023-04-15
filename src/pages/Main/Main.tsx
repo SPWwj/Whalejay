@@ -7,6 +7,7 @@ import "./Main.scss";
 import userImage from "../../assets/images/user-image.png";
 import appImage from "../../assets/images/app-image.png";
 import CommandParser from "../../utils/parser/CommandParser";
+import openaiLogo from "../../assets/images/openai-logo.jpg";
 
 interface AdditionalInfo {
 	type: string;
@@ -18,30 +19,89 @@ interface ChatMessage {
 	text: string;
 	additionalInfo?: AdditionalInfo;
 }
-
+const checkIfWebsiteIsAlive = async (url: string) => {
+	try {
+		const response = await fetch(url, { method: "HEAD" });
+		console.log(response);
+		if (response.ok || response.status === 404) {
+			// Website is alive (including 404 status)
+			return true;
+		} else {
+			// Website is not alive or returns another error status
+			return false;
+		}
+	} catch (error) {
+		// Network error or website is not reachable
+		console.error("Error checking website status:", error);
+		return false;
+	}
+};
 const Main: React.FC = () => {
+	const [isAlive, setIsAlive] = useState(false);
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			type: MessageType.App,
 			text: "Welcome to our app! How can we help you today?",
 		},
 	]);
-	const commandParser = new CommandParser();
+	const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
-	const handleSendMessage = (message: string) => {
+	const url = "https://whalejaywei.azurewebsites.net";
+
+	useEffect(() => {
+		const checkWebsiteStatus = async () => {
+			const result = await checkIfWebsiteIsAlive(url);
+			if (result) {
+				setIsAlive(true);
+				clearInterval(intervalId); // Clear the interval when the website is alive
+			}
+		};
+
+		const intervalId = setInterval(checkWebsiteStatus, 1000);
+
+		// Clean up the interval when the component is unmounted or the URL changes
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, [url]);
+	useEffect(() => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
+		}
+	}, [messages]);
+	if (isAlive === true) {
+		console.log("Not alive site");
+
+		// return <p>Checking website status...</p>;
+	}
+	// const commandParser = new CommandParser();
+
+	const handleSendMessage = async (message: string) => {
 		// Update the messages state with the new user message
-
 		setMessages((prevMessages) => [
 			...prevMessages,
 			{ type: MessageType.User, text: message },
 		]);
-		let appReply: ChatMessage;
-		// Check if the user typed "Show image"
+
 		const imageUrl =
 			"https://pm1.narvii.com/6190/2e8c00ca75684e3396fa0fad4da308f3a6cf9451_hq.jpg"; // Replace with a valid image URL
-		if (message.toLowerCase() === "show image") {
+
+		if (isAlive === false) {
+			console.log("Not alive site");
+
+			const appReply: ChatMessage = {
+				type: MessageType.App,
+				text: "还没醒，先等等~",
+				additionalInfo: {
+					type: "image",
+					content: imageUrl,
+				},
+			};
+			setMessages((prevMessages) => [...prevMessages, appReply]);
+		} else if (message.toLowerCase() === "show image") {
 			// Add an app reply with the image URL as additional information
-			appReply = {
+			const appReply: ChatMessage = {
 				type: MessageType.App,
 				text: "Here is an image for you:",
 				additionalInfo: {
@@ -49,23 +109,36 @@ const Main: React.FC = () => {
 					content: imageUrl,
 				},
 			};
-		} else {
-			// Process the user message and get app feedback
-			const appFeedback = commandParser.parse(message)?.execute();
-			appReply = {
-				type: MessageType.App,
-				text: appFeedback ?? "Command not recognized",
-				additionalInfo: {
-					type: "text",
-					content: "你好",
-				},
-			};
-		}
-
-		setTimeout(() => {
 			setMessages((prevMessages) => [...prevMessages, appReply]);
-		}, 0.2);
+		} else {
+			try {
+				const response = await fetch(
+					`https://whalejaywei.azurewebsites.net/chatgpt/${encodeURIComponent(
+						message
+					)}`
+				);
+				console.log(response);
+
+				if (response.ok) {
+					const appReplyText = await response.text();
+					const appReply: ChatMessage = {
+						type: MessageType.App,
+						text: appReplyText,
+						// additionalInfo: {
+						// 	type: "text",
+						// 	content: "你好",
+						// },
+					};
+					setMessages((prevMessages) => [...prevMessages, appReply]);
+				} else {
+					console.error("Error fetching data from API:", response.status);
+				}
+			} catch (error) {
+				console.error("Error fetching data from API:", error);
+			}
+		}
 	};
+
 	const isLatestMessage = (index: number, type: MessageType) => {
 		const latestIndexForType = messages
 			.slice()
@@ -74,14 +147,6 @@ const Main: React.FC = () => {
 		const totalCount = messages.length;
 		return totalCount - index - 1 === latestIndexForType;
 	};
-	const chatContainerRef = React.useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if (chatContainerRef.current) {
-			chatContainerRef.current.scrollTop =
-				chatContainerRef.current.scrollHeight;
-		}
-	}, [messages]);
 
 	return (
 		<div className="page page--main">
@@ -97,7 +162,13 @@ const Main: React.FC = () => {
 									isLatestMessage(index, msg.type) ? "latest-message" : ""
 								}
 								name={msg.type === MessageType.User ? "User" : "App"}
-								imageSrc={msg.type === MessageType.User ? userImage : appImage}
+								imageSrc={
+									msg.type === MessageType.User
+										? userImage
+										: isAlive
+										? openaiLogo
+										: appImage
+								}
 							/>
 							{msg.additionalInfo && msg.additionalInfo.type === "image" && (
 								<img
