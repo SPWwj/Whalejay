@@ -3,22 +3,23 @@ import UserInput from "../../components/UserInput/UserInput";
 import MessageCard, {
 	MessageType,
 } from "../../components/MessageCard/MessageCard";
-import "./Main.scss";
+import "./Image.scss";
 import userImage from "../../assets/images/user-image.png";
 import appImage from "../../assets/images/app-image.png";
 import openaiLogo from "../../assets/images/openai-logo.jpg";
-import { v4 as uuidv4 } from "uuid"; // Import UUID library to generate unique IDs
 import { IChatMessage } from "../../model/IChatMessage";
+import { v4 as uuidv4 } from "uuid"; // Import UUID library to generate unique IDs
 
 const checkIfWebsiteIsAlive = async (url: string) => {
 	try {
 		const response = await fetch(url, { method: "HEAD" });
-		if (response.ok) {
-			// Website is alive
+		console.log(response);
+		if (response.ok || response.status === 404) {
+			// Website is alive (including 404 status)
 			return true;
 		} else {
 			// Website is not alive or returns another error status
-			return true;
+			return false;
 		}
 	} catch (error) {
 		// Network error or website is not reachable
@@ -49,7 +50,7 @@ const Main: React.FC = () => {
 				const appReply: IChatMessage = {
 					id: uuidv4(),
 					type: MessageType.App,
-					text: "我睡醒了，有什么事吗？",
+					text: "我睡醒了，你可以用关键词生成图片...",
 				};
 				setMessages((prevMessages) => [...prevMessages, appReply]);
 			}
@@ -62,8 +63,7 @@ const Main: React.FC = () => {
 		}
 
 		// No need to return a cleanup function as there's no interval to clear
-	}, [isAlive]); // Empty dependency array
-
+	}, []); // Empty dependency array
 	useEffect(() => {
 		if (chatContainerRef.current) {
 			chatContainerRef.current.scrollTop =
@@ -79,59 +79,81 @@ const Main: React.FC = () => {
 			...prevMessages,
 			{ id: uuidv4(), type: MessageType.User, text: message },
 		]);
-		const messageId = uuidv4();
+
+		const imageUrl =
+			"https://pm1.narvii.com/6190/2e8c00ca75684e3396fa0fad4da308f3a6cf9451_hq.jpg"; // Replace with a valid image URL
+
 		if (isAlive === false) {
-			let appReply: IChatMessage = {
-				id: messageId,
+			console.log("Not alive site");
+
+			const appReply: IChatMessage = {
+				id: uuidv4(),
 				type: MessageType.App,
-				text: "还没醒，先等等~， 我又搓了它一下",
+				text: "还没醒，先等等~",
 			};
-			checkIfWebsiteIsAlive(url).then(() => {
-				appReply.text = "啊被戳醒了~";
-				setMessages((prevMessages) => [...prevMessages, appReply]);
-			});
+			setMessages((prevMessages) => [...prevMessages, appReply]);
+		} else if (message.toLowerCase() === "show image") {
+			// Add an app reply with the image URL as additional information
+			const appReply: IChatMessage = {
+				id: uuidv4(),
+				type: MessageType.App,
+				text: "这是你的图片:",
+				additionalInfo: {
+					type: "image",
+					content: imageUrl,
+				},
+			};
 			setMessages((prevMessages) => [...prevMessages, appReply]);
 		} else {
-			let appReply: IChatMessage = {
-				id: messageId,
-				type: MessageType.App,
-				text: "Loading",
-			};
+			try {
+				const sanitizedMessage = message.replace(/[\n\r]+/g, " ");
 
-			setMessages((prevMessages) => [...prevMessages, appReply]);
+				const requestBody = {
+					prompt: encodeURIComponent(sanitizedMessage), // Replace with the desired prompt
+					N: 1, // Number of images
+					size: "512x512", // Image size
+				};
 
-			fetchMessage(messageId, message).then((updatedReply) => {
-				appReply = updatedReply;
-				setMessages((prevMessages) =>
-					prevMessages.map((msg) => (msg.id === messageId ? appReply : msg))
-				);
-			});
-		}
-	};
-	const fetchMessage = async (
-		messageId: string,
-		message: string
-	): Promise<IChatMessage> => {
-		let appReply: IChatMessage = {
-			id: messageId,
-			type: MessageType.App,
-			text: "Loading",
-		};
-		try {
-			const sanitizedMessage = message.replace(/[\n\r]+/g, " ");
-			const response = await fetch(
-				`${url}/chatgpt/${encodeURIComponent(sanitizedMessage)}`
-			);
+				const response = await fetch(`${url}/image`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(requestBody),
+				});
 
-			if (response.ok) {
-				appReply.text = await response.text();
-			} else {
-				appReply.text = "出错啦";
+				if (response.ok) {
+					const responseData = await response.json();
+					console.log(responseData);
+					const appReply: IChatMessage = {
+						id: uuidv4(),
+						type: MessageType.App,
+						text: "Here is the generated image:",
+						additionalInfo: {
+							type: "image",
+							content: responseData.data[0].url, // Assuming the API returns an array with image URLs
+						},
+					};
+					setMessages((prevMessages) => [...prevMessages, appReply]);
+				} else {
+					console.error("Error fetching data from API:", response.status);
+					const appReply: IChatMessage = {
+						id: uuidv4(),
+						type: MessageType.App,
+						text: "出错啦",
+					};
+					setMessages((prevMessages) => [...prevMessages, appReply]);
+				}
+			} catch (error) {
+				console.error("Error fetching data from API:", error);
+				const appReply: IChatMessage = {
+					id: uuidv4(),
+					type: MessageType.App,
+					text: "出错啦",
+				};
+				setMessages((prevMessages) => [...prevMessages, appReply]);
 			}
-		} catch (error) {
-			appReply.text = "出错啦";
 		}
-		return appReply;
 	};
 
 	const isLatestMessage = (index: number, type: MessageType) => {

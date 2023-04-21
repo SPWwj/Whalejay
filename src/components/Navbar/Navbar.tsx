@@ -12,10 +12,10 @@ const Navbar: React.FC = () => {
 					<li className="navbar__menu-item">
 						<Link to="/">Home</Link>
 					</li>
+					<li className="navbar__menu-item">
+						<Link to="/image">Image</Link>
+					</li>
 					{/* <li className="navbar__menu-item">
-            <Link to="/about">About</Link>
-          </li>
-          <li className="navbar__menu-item">
             <Link to="/contact">Contact</Link>
           </li> */}
 				</ul>

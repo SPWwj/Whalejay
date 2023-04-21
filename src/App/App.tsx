@@ -6,6 +6,7 @@ import Footer from "../components/Footer/Footer";
 import Main from "../pages/Main/Main";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
+import Image from "../pages/Image/Image";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -17,6 +18,7 @@ const App: React.FC = () => {
 				<Content>
 					<Routes>
 						<Route path="/" element={<Main />} />
+						<Route path="/image" element={<Image />} />
 						<Route path="/about" element={<About />} />
 						<Route path="/contact" element={<Contact />} />
 					</Routes>
