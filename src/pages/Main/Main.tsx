@@ -9,6 +9,7 @@ import appImage from "../../assets/images/app-image.png";
 import openaiLogo from "../../assets/images/openai-logo.jpg";
 import { v4 as uuidv4 } from "uuid"; // Import UUID library to generate unique IDs
 import { IChatMessage } from "../../model/IChatMessage";
+import { PromptJson, createPromptJson } from "../../model/PromptJson";
 
 const checkIfWebsiteIsAlive = async (url: string) => {
 	try {
@@ -118,17 +119,67 @@ const Main: React.FC = () => {
 			text: "Loading",
 		};
 		try {
-			const sanitizedMessage = message.replace(/[\n\r]+/g, " ");
+			const prompt = createPromptJson(message);
+			console.log("this is prompt ", prompt);
+
+			const sanitizedMessage = prompt.replace(/\r?\n|\r/g, " ");
+
 			const response = await fetch(
 				`${url}/chatgpt/${encodeURIComponent(sanitizedMessage)}`
 			);
 
+			console.log("this is response ", response);
 			if (response.ok) {
-				appReply.text = await response.text();
+				const respondTest = await response.text();
+				console.log("text ", respondTest);
+				const cleanedJsonString = respondTest.replace(/,\s*([\]}])/g, "$1");
+				console.log("cleanedJsonString ", respondTest);
+
+				const updatedPromptJSON: PromptJson = JSON.parse(cleanedJsonString);
+				appReply.text = updatedPromptJSON.Feedback;
+
+				if (
+					updatedPromptJSON.Command &&
+					updatedPromptJSON.Command.GenerateImage &&
+					updatedPromptJSON.Command.GenerateImage.status === true
+				) {
+					try {
+						const requestBody = {
+							prompt: encodeURIComponent(
+								updatedPromptJSON.Command.GenerateImage.keyword ?? "?"
+							), // Replace with the desired prompt
+							N: 1, // Number of images
+							size: "512x512", // Image size
+						};
+
+						const response = await fetch(`${url}/image`, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify(requestBody),
+						});
+
+						if (response.ok) {
+							const responseData = await response.json();
+							appReply.additionalInfo = {
+								type: "image",
+								content: responseData.data[0].url, // Assuming the API returns an array with image URLs
+							};
+						} else {
+							console.error("Error fetching data from API:", response.status);
+							appReply.text = "出错啦";
+						}
+					} catch (error) {
+						console.error("Error fetching data from API:", error);
+						appReply.text = "出错啦";
+					}
+				}
 			} else {
 				appReply.text = "出错啦";
 			}
 		} catch (error) {
+			console.log("error", error);
 			appReply.text = "出错啦";
 		}
 		return appReply;

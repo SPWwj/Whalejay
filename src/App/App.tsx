@@ -9,6 +9,7 @@ import Contact from "../pages/Contact/Contact";
 import Image from "../pages/Image/Image";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Clan from "../pages/Clan/Clan";
 
 const App: React.FC = () => {
 	return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
 						<Route path="/image" element={<Image />} />
 						<Route path="/about" element={<About />} />
 						<Route path="/contact" element={<Contact />} />
+						<Route path="/clan" element={<Clan />} />
 					</Routes>
 				</Content>
 				<Footer />
