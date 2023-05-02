@@ -1,5 +1,5 @@
 .page {
-	height: 100%;
+	height: calc(100vh - 165px);
 	display: flex;
 	flex-direction: column;
 }
@@ -30,3 +30,9 @@
 	overflow: auto;
 	height: 100%;
 }
+// .app {
+// 	overflow: hidden;
+// }
+// .content {
+// 	overflow: hidden;
+// }

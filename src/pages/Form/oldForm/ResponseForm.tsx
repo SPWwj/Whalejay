@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { IAnswer } from "./model/IAnswer";
-import { IQuestion } from "./model/IQuestion";
-import { IResponse } from "./model/IResponse";
+import { IAnswer } from "../model/IAnswer";
+import { IQuestion } from "../model/IQuestion";
+import { IResponse } from "../model/IResponse";
 
 interface Props {
 	formId: number;

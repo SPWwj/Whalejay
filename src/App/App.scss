@@ -1,7 +1,6 @@
 html,
 body,
 #root {
-	height: 100%;
 	margin: 0;
 	padding: 0;
 	// Add a linear gradient background for a softer appearance
@@ -16,11 +15,9 @@ textarea {
 	cursor: url("/assets/images/cursor/cursor_text_32.png"), auto;
 }
 .app {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	overflow: hidden;
 }
 
 .navbar {
@@ -34,8 +31,7 @@ textarea {
 }
 .content {
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-	height: calc(100% - 100px);
-	overflow: hidden;
+	position: relative;
 }
 
 @media only screen and (min-width: 1200px) {

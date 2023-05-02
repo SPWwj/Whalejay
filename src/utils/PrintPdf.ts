@@ -17,7 +17,7 @@ export const printContentToPdf = (id: string) => {
     }
 
     const options: Html2PdfOptions = {
-        margin: [1, 0.5],
+        margin: [0, 0],
         filename: 'content.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
