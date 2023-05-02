@@ -1,0 +1,91 @@
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th,
+td {
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+th {
+	font-weight: 500;
+	background-color: #f1f1f1;
+}
+
+input[type="text"] {
+	width: 100%;
+	padding: 6px 12px;
+	font-size: 14px;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+
+.ButtonContainer {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+button {
+	background-color: #4caf50;
+	border: none;
+	color: white;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	transition-duration: 0.4s;
+
+	&:hover {
+		background-color: #45a049;
+	}
+}
+
+.form-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.form-table th,
+.form-table td {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+.form-table tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+.form-wrapper {
+	margin: 0 auto;
+	max-width: 800px;
+	padding: 20px;
+	background-color: #f8f8f8;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.rotated-content {
+	animation: initial;
+	transform: rotate(90deg);
+	margin: 5%;
+	padding: 5%;
+	max-width: none;
+}
+.form-page {
+	height: 100%;
+	overflow: auto;
+}
+.dragged {
+	opacity: 0.5;
+}
+
+.dragover {
+	background-color: rgba(0, 123, 255, 0.3);
+}

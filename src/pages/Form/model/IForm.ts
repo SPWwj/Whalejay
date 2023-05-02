@@ -1,4 +1,5 @@
 import { IQuestion } from "./IQuestion";
+import { IResponse } from "./IResponse";
 
 export interface IForm {
     id: number;
@@ -7,4 +8,5 @@ export interface IForm {
     createdAt: string;
     updatedAt: string;
     questions: IQuestion[];
+    responses: IResponse[];
 }

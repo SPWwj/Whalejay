@@ -1,4 +1,4 @@
-import { IForm } from "../model/form/IForm";
+import { IForm } from "../model/IForm";
 
 export const fetchFormData = async (formId: number): Promise<IForm> => {
     const response = await fetch(`https://localhost:7276/api/Forms/${formId}`, {

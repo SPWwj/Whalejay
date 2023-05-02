@@ -8,8 +8,8 @@ type Html2PdfOptions = {
 };
 
 
-export const printContentToPdf = () => {
-    const contentElement = document.querySelector<HTMLElement>('.content');
+export const printContentToPdf = (id: string) => {
+    const contentElement = document.querySelector<HTMLElement>(id);
 
     if (!contentElement) {
         console.error('Content element not found');
@@ -21,7 +21,7 @@ export const printContentToPdf = () => {
         filename: 'content.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' },
     };
 
     html2pdf().set(options).from(contentElement).save();
