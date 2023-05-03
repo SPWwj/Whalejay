@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import PrintButton from "../../components/Buttons/PrintButton";
 import SendIcon from "@mui/icons-material/Send";
-import { fetchFormData } from "./api/FormApi";
+import { fetchFormData, submitResponse } from "./api/FormApi";
 import { IForm } from "./model/IForm";
 import { IResponse } from "./model/IResponse";
 import { IAnswer } from "./model/IAnswer";
@@ -32,29 +32,6 @@ import Button from "@mui/material/Button";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormDisplay from "./FormDisplay";
 
-async function submitResponse(response: IResponse) {
-	const apiUrl = "https://localhost:7276/api/Responses";
-
-	try {
-		const responseJson = await fetch(apiUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(response),
-		});
-
-		if (!responseJson.ok) {
-			throw new Error("Failed to submit response");
-		}
-
-		const responseData = await responseJson.json();
-		return responseData;
-	} catch (error) {
-		console.error("Error submitting response:", error);
-		throw error;
-	}
-}
 
 export default function ReactVirtualizedTable() {
 	const [isSending, setIsSending] = useState(false);
@@ -68,7 +45,7 @@ export default function ReactVirtualizedTable() {
 		try {
 			const formData = await fetchFormData(1);
 
-			console.log(formData);
+			//console.log(formData);
 			formData.questions.sort((a, b) => a.position - b.position);
 			formData.responses.sort(
 				(a, b) =>
