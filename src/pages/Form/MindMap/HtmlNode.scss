@@ -1,0 +1,34 @@
+// HtmlNode.module.scss
+.node {
+	background: #ed6b5a;
+	border-radius: 5px;
+	width: 150px;
+	height: 70px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	text-align: center;
+	white-space: nowrap;
+	margin: 0 5px;
+}
+
+.role {
+	margin: 0;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.containerWithBorder {
+	border-bottom: solid;
+	padding-bottom: 10px;
+}
+.foreignObject {
+	width: 250px;
+	height: 100px;
+}

@@ -17,7 +17,7 @@ const PrintButton: React.FC<Props> = ({ id }) => {
 				startIcon={<PrintIcon />}
 				onClick={() => printContentToPdf(id)}
 			>
-				打印
+				Print
 			</Button>
 		</div>
 	);

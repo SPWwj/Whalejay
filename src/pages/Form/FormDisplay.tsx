@@ -49,6 +49,9 @@ const FormDisplay: React.FC<FormDisplayProps> = ({ form }) => {
 								}
 								return accumulator;
 							}, [])}
+						{(responseIndex + 1) % 12 === 0 && (
+							<div className="page-break"></div>
+						)}
 					</div>
 				))}
 			</div>

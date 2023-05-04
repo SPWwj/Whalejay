@@ -31,21 +31,24 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormDisplay from "./FormDisplay";
-
+import { deleteReponsesUrl, putAnswersUrl } from "../../api/Api";
+import MindMap from "./MindMap/MindMap";
 
 export default function ReactVirtualizedTable() {
 	const [isSending, setIsSending] = useState(false);
 	const [form, setForm] = useState<IForm | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const formRef = useRef<HTMLFormElement>(null);
+	const formAnswerRef = useRef<HTMLFormElement>(null);
 	const [answers, setAnswers] = useState<IAnswer[]>([]);
 	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+	const [editing, setEditing] = useState(false);
+	const [updatedAnswers, setUpdatedAnswers] = useState<IAnswer[]>([]);
 
 	const fetchAndSetFormData = async () => {
 		try {
 			const formData = await fetchFormData(1);
 
-			//console.log(formData);
+			// console.log(formData);
 			formData.questions.sort((a, b) => a.position - b.position);
 			formData.responses.sort(
 				(a, b) =>
@@ -113,16 +116,11 @@ export default function ReactVirtualizedTable() {
 				answerText: "",
 			}));
 			setAnswers(newAnswers);
-			formRef.current?.reset();
-		}
-	};
-	const handleClick = () => {
-		if (formRef.current) {
-			formRef.current.requestSubmit();
+			formAnswerRef.current?.reset();
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmitAnswer = async (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("Submitting form");
 		if (form === null) return;
@@ -143,17 +141,92 @@ export default function ReactVirtualizedTable() {
 		newAnswers[index].answerText = e.target.value;
 		setAnswers(newAnswers);
 	};
+	const handleFormInputChange = (
+		responseId: number,
+		questionId: number,
+		newValue: string
+	) => {
+		// Update the state with the new value for the corresponding question and response
+		setUpdatedAnswers((prevAnswers) => {
+			const answerIndex = prevAnswers.findIndex(
+				(answer) =>
+					answer.responseId === responseId && answer.questionId === questionId
+			);
+			if (answerIndex >= 0) {
+				// Update the existing answer with the new value
+				return prevAnswers.map((answer, index) =>
+					index === answerIndex ? { ...answer, answerText: newValue } : answer
+				);
+			} else {
+				// Add a new answer to the array
+				return [
+					...prevAnswers,
+					{
+						id: 0,
+						responseId,
+						questionId,
+						answerText: newValue,
+					},
+				];
+			}
+		});
+	};
+	const handleEditClick = () => {
+		setEditing(!editing);
+	};
+	const handleFormSaveClick = async (event: React.FormEvent) => {
+		event.preventDefault();
+		// Submit the updated data to the server
+		console.log("Submitting updated data to the server");
+		try {
+			const response = await fetch(putAnswersUrl, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(updatedAnswers),
+			});
+			if (response.ok) {
+				fetchAndSetFormData();
+				console.log("Data successfully submitted to the server");
+			} else {
+				console.error("Failed to submit data to the server");
+			}
+		} catch (error) {
+			console.error("Error submitting data to the server:", error);
+		} finally {
+			setEditing(false);
+		}
+	};
+	const handleDeleteClick = async (responseId: number) => {
+		// Delete the response from the server
+		console.log("Deleting response from the server");
+		try {
+			const response = await fetch(deleteReponsesUrl(responseId), {
+				method: "DELETE",
+			});
+			if (response.ok) {
+				console.log("Response successfully deleted from the server");
+				// Update the component state
+				fetchAndSetFormData();
+			} else {
+				console.error("Failed to delete response from the server");
+			}
+		} catch (error) {
+			console.error("Error deleting response from the server:", error);
+		}
+	};
 
 	return (
 		<div>
-			<h1>只顯示你輸入成功的數據,不保存數據:</h1>
+			<h1>Personal Private Server! Do not provide sensitive Data!:</h1>
 			<Dialog
 				open={errorDialogOpen}
 				onClose={() => setErrorDialogOpen(false)}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 			>
-				<DialogTitle id="alert-dialog-title">警告</DialogTitle>
+				<DialogTitle id="alert-dialog-title">Warning</DialogTitle>
 				<DialogContent>
 					<DialogContentText id="alert-dialog-description">
 						{error}
@@ -161,7 +234,7 @@ export default function ReactVirtualizedTable() {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={() => setErrorDialogOpen(false)} color="primary">
-						关闭
+						Close
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -172,45 +245,79 @@ export default function ReactVirtualizedTable() {
 					id="form_content"
 					className={styles.form_paper}
 				>
-					<Table>
-						<TableHead>
-							<TableRow>
-								{/* <TableCell>Dessert (100g serving)</TableCell> */}
-								{form?.questions.map((question) => (
-									<TableCell
-										className={styles.form_header_cell}
-										key={question.id}
-										align="right"
-									>
-										{question.questionText}
-									</TableCell>
-								))}
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{form?.responses.map((response, index) => (
-								<TableRow key={index}>
-									{form.questions.map((question, index) => {
-										const answer = response.answers.find(
-											(a) => a.questionId === question.id
-										);
-										return (
-											<TableCell
-												className={styles.form_data_cell}
-												key={index}
-												align="right"
-											>
-												{answer?.answerText || ""}
-											</TableCell>
-										);
-									})}
+					<form onSubmit={handleFormSaveClick}>
+						<Table>
+							<TableHead>
+								<TableRow>
+									{/* <TableCell>Dessert (100g serving)</TableCell> */}
+									{form?.questions.map((question) => (
+										<TableCell
+											className={styles.form_header_cell}
+											key={question.id}
+											align="right"
+										>
+											{question.questionText}
+										</TableCell>
+									))}
+									{editing && (
+										<TableCell
+											align="right"
+											className={styles.form_header_cell}
+										>
+											Command
+										</TableCell>
+									)}
 								</TableRow>
-							))}
-						</TableBody>
-					</Table>
+							</TableHead>
+							<TableBody>
+								{form?.responses.map((response, index) => (
+									<TableRow key={index}>
+										{form.questions.map((question, index) => {
+											const answer = response.answers.find(
+												(a) => a.questionId === question.id
+											);
+											return (
+												<TableCell
+													className={styles.form_data_cell}
+													key={index}
+													align="right"
+												>
+													{editing ? (
+														<input
+															type="text"
+															defaultValue={answer?.answerText || ""}
+															onChange={(e) =>
+																handleFormInputChange(
+																	response.id,
+																	question.id,
+																	e.target.value
+																)
+															}
+														/>
+													) : (
+														answer?.answerText || ""
+													)}
+												</TableCell>
+											);
+										})}
+										{editing && (
+											<TableCell className={styles.form_data_cell} align="left">
+												<button
+													type="button"
+													onClick={() => handleDeleteClick(response.id)}
+												>
+													Delete
+												</button>
+											</TableCell>
+										)}
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</form>
 				</TableContainer>
 
-				<form ref={formRef} onSubmit={handleSubmit}>
+				<form ref={formAnswerRef} onSubmit={handleSubmitAnswer}>
 					<Grid container spacing={2} className={styles.newEntryRow}>
 						{answers?.map((answer, answerIndex) => (
 							<Grid item key={answer.questionId}>
@@ -229,16 +336,20 @@ export default function ReactVirtualizedTable() {
 					</Grid>
 				</form>
 				<div className={styles.ButtonContainer}>
-					<PrintButton id="#to_print" />
+					<PrintButton id="to_print" />
+					<Button onClick={handleEditClick}>
+						{editing ? "Cancel" : "Edit"}
+					</Button>
+					{editing && <Button onClick={handleFormSaveClick}>Save</Button>}
 
 					<Button
 						variant="contained"
 						color="primary"
 						startIcon={<SendIcon />}
-						onClick={handleClick}
+						onClick={handleSubmitAnswer}
 						disabled={isSending}
 					>
-						{isSending ? <CircularProgress size={24} /> : "輸入"}
+						{isSending ? <CircularProgress size={24} /> : "Send"}
 					</Button>
 				</div>
 				<Accordion className={styles.accordion_root}>
@@ -254,6 +365,9 @@ export default function ReactVirtualizedTable() {
 						<FormDisplay form={form} />
 					</AccordionDetails>
 				</Accordion>
+				<div id="graph_to_print">
+					<MindMap form={form} />
+				</div>
 			</div>
 		</div>
 	);

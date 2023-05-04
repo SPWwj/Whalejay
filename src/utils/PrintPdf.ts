@@ -1,4 +1,7 @@
 import html2pdf from "html2pdf.js";
+
+
+
 type Html2PdfOptions = {
     margin: [number, number];
     filename: string;
@@ -9,10 +12,10 @@ type Html2PdfOptions = {
 
 
 export const printContentToPdf = (id: string) => {
-    const contentElement = document.querySelector<HTMLElement>(id);
+    const contentElement = document.getElementById(id);
 
     if (!contentElement) {
-        console.error('Content element not found');
+        console.error('Content element not found: ' + id);
         return;
     }
 
@@ -26,4 +29,3 @@ export const printContentToPdf = (id: string) => {
 
     html2pdf().set(options).from(contentElement).save();
 };
-

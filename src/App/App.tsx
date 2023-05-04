@@ -8,13 +8,14 @@ import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import Image from "../pages/Image/Image";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import From from "../pages/Form/Form";
+import { Routes, Route, HashRouter } from "react-router-dom";
+import Form from "../pages/Form/Form";
+// import MindMap from "../pages/Form/MindMap/MindMap";
 
 const App: React.FC = () => {
 	return (
 		<div className="app">
-			<Router>
+			<HashRouter>
 				<Navbar />
 				<Content>
 					<Routes>
@@ -22,11 +23,12 @@ const App: React.FC = () => {
 						<Route path="/image" element={<Image />} />
 						<Route path="/about" element={<About />} />
 						<Route path="/contact" element={<Contact />} />
-						<Route path="/form" element={<From />} />
+						<Route path="/form" element={<Form />} />
+						{/* <Route path="/mindmap" element={<MindMap />} /> */}
 					</Routes>
 					<Footer />
 				</Content>
-			</Router>
+			</HashRouter>
 		</div>
 	);
 };
