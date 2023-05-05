@@ -26,10 +26,10 @@ const transformData = (
 			(a) => a.questionId === node.questionId
 		)?.answerText;
 
-		let siblingName = "";
-		let siblingRole: string = "";
-		if (node.siblingNodeId) {
-			const siblingNode = nodes.find((n) => n.id === node.siblingNodeId);
+		let extendName = "";
+		let extendRole: string = "";
+		if (node.extendNodeId) {
+			const siblingNode = nodes.find((n) => n.id === node.extendNodeId);
 			if (siblingNode) {
 				const siblingResponse = form.responses.find(
 					(r) => r.id === siblingNode.responseId
@@ -40,8 +40,8 @@ const transformData = (
 					" " +
 					siblingResponse?.answers.find((a) => a.questionId === 1)?.answerText;
 
-				siblingName = DELIMITER + siblingFullName;
-				siblingRole =
+				extendName = DELIMITER + siblingFullName;
+				extendRole =
 					DELIMITER +
 						siblingResponse?.answers.find(
 							(a) => a.questionId === node.questionId
@@ -54,8 +54,8 @@ const transformData = (
 			.map((childNode) => buildMindMapNode(childNode));
 
 		return {
-			name: nodeName + siblingName,
-			role: nodeRole + siblingRole,
+			name: nodeName + extendName,
+			role: nodeRole + extendRole,
 			children: children.length > 0 ? children : undefined,
 		};
 	};
@@ -106,6 +106,7 @@ const MindMap: React.FC<Props> = ({ form }) => {
 	useEffect(() => {
 		if (isFirstRender.current) {
 			fetchResponseTreeNodes(1, 9).then((data) => {
+				console.log(data);
 				setResponseTreeNode(data);
 			});
 			isFirstRender.current = false;
