@@ -10,3 +10,4 @@ export const getFormUrl = (formId: number) => `${baseUrl}/api/Forms/${formId}`;
 export const postReponsesUrl = `${baseUrl}/api/Responses`;
 export const putAnswersUrl = `${baseUrl}/api/Answers/Bulk`;
 export const deleteReponsesUrl = (id: number) => `${baseUrl}/api/Responses/${id}`;
+export const gptChatWakeUrl = `${baseUrl}/chatgpt/wake`;

@@ -9,24 +9,9 @@ import appImage from "../../assets/images/app-image.png";
 import openaiLogo from "../../assets/images/openai-logo.jpg";
 import { IChatMessage } from "../../model/IChatMessage";
 import { v4 as uuidv4 } from "uuid"; // Import UUID library to generate unique IDs
+import { checkMainSiteAlive } from "../../api/ChatGptApi";
+import { baseUrl } from "../../api/Api";
 
-const checkIfWebsiteIsAlive = async (url: string) => {
-	try {
-		const response = await fetch(url, { method: "HEAD" });
-		console.log(response);
-		if (response.ok || response.status === 404) {
-			// Website is alive (including 404 status)
-			return true;
-		} else {
-			// Website is not alive or returns another error status
-			return false;
-		}
-	} catch (error) {
-		// Network error or website is not reachable
-		console.error("Error checking website status:", error);
-		return false;
-	}
-};
 const Main: React.FC = () => {
 	const [isAlive, setIsAlive] = useState(false);
 	const hasExecutedCheck = useRef(false);
@@ -40,11 +25,9 @@ const Main: React.FC = () => {
 	]);
 	const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
-	const url = "https://bitflow.azurewebsites.net";
-
 	useEffect(() => {
 		const checkWebsiteStatus = async () => {
-			const result = await checkIfWebsiteIsAlive(url);
+			const result = await checkMainSiteAlive();
 			if (result) {
 				setIsAlive(true);
 				const appReply: IChatMessage = {
@@ -114,7 +97,7 @@ const Main: React.FC = () => {
 					size: "512x512", // Image size
 				};
 
-				const response = await fetch(`${url}/image`, {
+				const response = await fetch(`${baseUrl}/image`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",

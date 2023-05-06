@@ -1,2 +1,2 @@
-C:\Users\Wwj\Documents\Source\Repos\Whalejay\Whalejay\Reactjs\whalejay\obj\Debug\Whalejay.esproj.SuggestedBindingRedirects.cache
-C:\Users\Wwj\Documents\Source\Repos\Whalejay\Whalejay\Reactjs\whalejay\obj\Debug\Whalejay.esproj.CoreCompileInputs.cache
+C:\Users\Wwj\Documents\Source\Repos\WhaleJay\Whalejay\Reactjs\whalejay\obj\Debug\Whalejay.esproj.SuggestedBindingRedirects.cache
+C:\Users\Wwj\Documents\Source\Repos\WhaleJay\Whalejay\Reactjs\whalejay\obj\Debug\Whalejay.esproj.CoreCompileInputs.cache

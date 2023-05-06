@@ -1,7 +1,7 @@
 import { MessageType } from "../components/MessageCard/MessageCard";
 import { IChatMessage } from "../model/IChatMessage";
 import { createPromptJson, PromptJson } from "../model/PromptJson";
-import { baseUrl, gptChatUrl, gptImageUrl } from "./Api";
+import { gptChatUrl, gptChatWakeUrl, gptImageUrl } from "./Api";
 
 
 
@@ -24,7 +24,7 @@ export const checkIfWebsiteIsAlive = async (url: string) => {
 };
 
 export const checkMainSiteAlive = async () => {
-	return checkIfWebsiteIsAlive(baseUrl);
+	return checkIfWebsiteIsAlive(gptChatWakeUrl);
 }
 
 export const fetchMessage = async (
