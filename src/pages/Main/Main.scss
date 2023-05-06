@@ -7,14 +7,18 @@
 .page-content {
 	flex-grow: 1;
 	overflow: hidden;
-
-	padding: 1rem;
+	padding: 5%;
 	// Add your page content styles here
 	// Add a soft edge to the page-content container by adding a border-radius
 	background-color: #ffffff;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-
+@media screen and (min-width: 1152px) {
+	.page-content {
+		padding-left: 20%;
+		padding-right: 20%;
+	}
+}
 .page--main {
 	.input-container {
 		bottom: 0;

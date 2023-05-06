@@ -10,10 +10,10 @@ body,
 button:hover {
 	cursor: url("/assets/images/cursor/tap_32.png") 16 16, auto;
 }
-input,
-textarea {
-	cursor: url("/assets/images/cursor/cursor_text_32.png"), auto;
-}
+// input,
+// textarea {
+// 	// cursor: url("/assets/images/cursor/cursor_text_32.png"), auto;
+// }
 .app {
 	display: flex;
 	flex-direction: column;

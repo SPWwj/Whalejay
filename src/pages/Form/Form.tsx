@@ -42,6 +42,7 @@ export default function ReactVirtualizedTable() {
 	const [answers, setAnswers] = useState<IAnswer[]>([]);
 	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 	const [editing, setEditing] = useState(false);
+	const [displayId, setdisplayId] = useState(false);
 	const [updatedAnswers, setUpdatedAnswers] = useState<IAnswer[]>([]);
 
 	const fetchAndSetFormData = async () => {
@@ -142,6 +143,7 @@ export default function ReactVirtualizedTable() {
 		setAnswers(newAnswers);
 	};
 	const handleFormInputChange = (
+		id: number,
 		responseId: number,
 		questionId: number,
 		newValue: string
@@ -162,7 +164,7 @@ export default function ReactVirtualizedTable() {
 				return [
 					...prevAnswers,
 					{
-						id: 0,
+						id,
 						responseId,
 						questionId,
 						answerText: newValue,
@@ -174,10 +176,14 @@ export default function ReactVirtualizedTable() {
 	const handleEditClick = () => {
 		setEditing(!editing);
 	};
+	const handleIdClick = () => {
+		setdisplayId(!displayId);
+	};
 	const handleFormSaveClick = async (event: React.FormEvent) => {
 		event.preventDefault();
 		// Submit the updated data to the server
 		console.log("Submitting updated data to the server");
+		//console.log(updatedAnswers);
 		try {
 			const response = await fetch(putAnswersUrl, {
 				method: "PUT",
@@ -219,7 +225,9 @@ export default function ReactVirtualizedTable() {
 
 	return (
 		<div>
+		
 			<h1>Personal Private Server! Do not provide sensitive Data!:</h1>
+			<h1>{displayId && `ID: ${form?.id}`} { form?.title}:</h1>
 			<Dialog
 				open={errorDialogOpen}
 				onClose={() => setErrorDialogOpen(false)}
@@ -249,14 +257,20 @@ export default function ReactVirtualizedTable() {
 						<Table>
 							<TableHead>
 								<TableRow>
-									{/* <TableCell>Dessert (100g serving)</TableCell> */}
-									{form?.questions.map((question) => (
+									{displayId && (
+										<TableCell
+											align="right"
+											className={styles.form_header_cell}
+										>
+											ID
+										</TableCell>
+									)}									{form?.questions.map((question) => (
 										<TableCell
 											className={styles.form_header_cell}
 											key={question.id}
 											align="right"
 										>
-											{question.questionText}
+											{question.questionText}{displayId && (` (${question.id})`) }
 										</TableCell>
 									))}
 									{editing && (
@@ -272,11 +286,17 @@ export default function ReactVirtualizedTable() {
 							<TableBody>
 								{form?.responses.map((response, index) => (
 									<TableRow key={index}>
+										{displayId && (
+											<TableCell className={styles.form_data_cell} align="left">
+												{response.id }
+											</TableCell>
+										)}
 										{form.questions.map((question, index) => {
 											const answer = response.answers.find(
 												(a) => a.questionId === question.id
 											);
 											return (
+
 												<TableCell
 													className={styles.form_data_cell}
 													key={index}
@@ -288,7 +308,8 @@ export default function ReactVirtualizedTable() {
 															defaultValue={answer?.answerText || ""}
 															onChange={(e) =>
 																handleFormInputChange(
-																	response.id,
+																	answer?.id ?? 0,
+																	response?.id,
 																	question.id,
 																	e.target.value
 																)
@@ -337,6 +358,9 @@ export default function ReactVirtualizedTable() {
 				</form>
 				<div className={styles.ButtonContainer}>
 					<PrintButton id="to_print" />
+					<Button onClick={handleIdClick}>
+						{!displayId ? "Display Id" : "Hide Id"}
+					</Button>
 					<Button onClick={handleEditClick}>
 						{editing ? "Cancel" : "Edit"}
 					</Button>

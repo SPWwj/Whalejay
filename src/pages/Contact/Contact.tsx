@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Contact.scss";
 
 const Contact: React.FC = () => {
@@ -6,25 +6,22 @@ const Contact: React.FC = () => {
 		e.preventDefault();
 		console.log("Form submitted!");
 	};
+	const [text, setText] = useState("");
 
+	const speak = () => {
+		const speechSynthesis = window.speechSynthesis;
+		const utterance = new SpeechSynthesisUtterance(text);
+		speechSynthesis.speak(utterance);
+	};
 	return (
-		<div className="page page--contact">
-			<h2>Contact Us</h2>
-			<form className="page--contact__form" onSubmit={handleSubmit}>
-				<label>
-					Name:
-					<input type="text" name="name" required />
-				</label>
-				<label>
-					Email:
-					<input type="email" name="email" required />
-				</label>
-				<label>
-					Message:
-					<textarea name="message" rows={5} required></textarea>
-				</label>
-				<button type="submit">Send</button>
-			</form>
+		<div>
+			<input
+				type="text"
+				value={text}
+				onChange={(e) => setText(e.target.value)}
+				placeholder="Enter text to convert to voice"
+			/>
+			<button onClick={speak}>Speak</button>
 		</div>
 	);
 };

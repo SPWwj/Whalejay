@@ -16,6 +16,9 @@ const Navbar: React.FC = () => {
 						<Link to="/image">Image</Link>
 					</li>
 					{/* <li className="navbar__menu-item">
+						<Link to="/GoogleTextToVoice">GoogleTextToVoice</Link>
+					</li> */}
+					{/* <li className="navbar__menu-item">
             <Link to="/contact">Contact</Link>
           </li> */}
 				</ul>

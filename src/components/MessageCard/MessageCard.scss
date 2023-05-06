@@ -1,7 +1,7 @@
 .message-card {
 	display: flex;
-	align-items: center;
-	margin-bottom: 1rem;
+	align-items: flex-start; // Updated from center to flex-start
+	margin-bottom: 2rem;
 }
 
 .message-card--user {
@@ -14,16 +14,24 @@
 	border-radius: 50%;
 	object-fit: cover;
 }
+.message-card__user-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0.5rem;
+}
 
 .message-card__content {
 	display: flex;
-	max-width: calc(100% - 50px); // considering the image width
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	padding: 0.5rem;
 	border-radius: 0.5rem;
 	background-color: #f3f3f3;
+	// width: 100%;
+	height: 100%;
+	justify-content: center;
 }
 
 .message-card--user .message-card__content {
@@ -55,8 +63,7 @@
 	border: 1px solid red;
 }
 .additional-content__image {
-	max-width: 100%;
+	max-width: 200px;
 	max-height: 200px;
 	align-self: baseline;
-	margin-left: 40px;
 }

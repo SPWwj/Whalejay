@@ -10,7 +10,12 @@ import openaiLogo from "../../assets/images/openai-logo.jpg";
 import { v4 as uuidv4 } from "uuid"; // Import UUID library to generate unique IDs
 import { IChatMessage } from "../../model/IChatMessage";
 import { checkMainSiteAlive, fetchMessage } from "../../api/ChatGptApi";
-
+import {
+	AWAKED_NOTICE,
+	AWAKED_TO_RESPOND_NOTICE,
+	AWAKING_INPROGRESS_NOTICE,
+	AWAKING_START_NOTICE,
+} from "../../text/text";
 
 const Main: React.FC = () => {
 	const [isAlive, setIsAlive] = useState(false);
@@ -20,13 +25,15 @@ const Main: React.FC = () => {
 		{
 			id: uuidv4(),
 			type: MessageType.App,
-			text: "正在唤醒中。。。请等候头像变化。",
+			text: AWAKING_START_NOTICE,
 		},
 	]);
 	const chatContainerRef = React.useRef<HTMLDivElement>(null);
 
-
 	useEffect(() => {
+		// Handle setting user language
+
+		// Handle checking website status
 		const checkWebsiteStatus = async () => {
 			const result = await checkMainSiteAlive();
 			if (result) {
@@ -34,27 +41,23 @@ const Main: React.FC = () => {
 				const appReply: IChatMessage = {
 					id: uuidv4(),
 					type: MessageType.App,
-					text: "我睡醒了，有什么事吗？",
+					text: AWAKED_NOTICE,
 				};
 				setMessages((prevMessages) => [...prevMessages, appReply]);
 			}
 		};
 
-		// Only execute the checkWebsiteStatus function if it hasn't been executed yet
 		if (!hasExecutedCheck.current) {
 			checkWebsiteStatus();
 			hasExecutedCheck.current = true;
 		}
 
-		// No need to return a cleanup function as there's no interval to clear
-	}, [isAlive]); // Empty dependency array
-
-	useEffect(() => {
+		// Handle scrolling chat container
 		if (chatContainerRef.current) {
 			chatContainerRef.current.scrollTop =
 				chatContainerRef.current.scrollHeight;
 		}
-	}, [messages]);
+	}, [isAlive, messages]);
 
 	// const commandParser = new CommandParser();
 
@@ -69,10 +72,10 @@ const Main: React.FC = () => {
 			let appReply: IChatMessage = {
 				id: messageId,
 				type: MessageType.App,
-				text: "还没醒，先等等~， 我又搓了它一下",
+				text: AWAKING_INPROGRESS_NOTICE,
 			};
 			checkMainSiteAlive().then(() => {
-				appReply.text = "啊被戳醒了~";
+				appReply.text = AWAKED_TO_RESPOND_NOTICE;
 				setMessages((prevMessages) => [...prevMessages, appReply]);
 			});
 			setMessages((prevMessages) => [...prevMessages, appReply]);
@@ -93,7 +96,6 @@ const Main: React.FC = () => {
 			});
 		}
 	};
-	
 
 	const isLatestMessage = (index: number, type: MessageType) => {
 		const latestIndexForType = messages

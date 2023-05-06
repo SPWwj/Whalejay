@@ -1,5 +1,7 @@
 import "./MessageCard.scss";
 import { IMessageCardProps } from "./IMessageCardProps";
+import { useState } from "react";
+import placeholderImage from "../../assets/images/placeholder.png";
 
 export enum MessageType {
 	User = "user",
@@ -14,22 +16,30 @@ const MessageCard: React.FC<IMessageCardProps> = ({
 	imageSrc,
 	additionalInfo,
 }) => {
+	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+
 	const messageClass =
 		type === MessageType.User ? "message-card--user" : "message-card--app";
-
+	const handleImageLoad = () => {
+		setImageLoaded(true);
+	};
 	return (
 		<div className={`message-card ${messageClass} ${className || ""}`}>
-			<img className="message-card__image" src={imageSrc} alt={name} />
-			<div className="message-card__content">
+			<div className="message-card__user-info">
+				<img className="message-card__image" src={imageSrc} alt={name} />
 				<span className="message-card__name">{name}</span>
+			</div>
+
+			<div className="message-card__content">
 				<p className="message-card__text">{message}</p>
 				{additionalInfo && (
 					<div className="message-card__additional-content">
 						{additionalInfo && additionalInfo.type === "image" && (
 							<img
-								src={additionalInfo.content}
+								src={imageLoaded ? additionalInfo.content : placeholderImage}
 								alt="Additional info"
 								className="additional-content additional-content__image"
+								onLoad={handleImageLoad}
 							/>
 						)}
 						{additionalInfo && additionalInfo.type === "text" && (
