@@ -38,9 +38,6 @@ export class ChatCommand extends AiCommand {
             );
         });
     }
-    interrupt(): void {
-        throw new Error("Method not implemented.");
-    }
 
 
 }

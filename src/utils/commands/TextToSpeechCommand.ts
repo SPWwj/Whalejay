@@ -24,7 +24,5 @@ export class TextToSpeechCommand extends AiCommand {
     execute<T>(setStateFunctions: Dispatch<SetStateAction<T>>): void {
         throw new Error("Method not implemented.");
     }
-    interrupt(): void {
-        throw new Error("Method not implemented.");
-    }
+
 }

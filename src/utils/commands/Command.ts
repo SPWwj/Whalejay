@@ -3,7 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 export abstract class Command {
   abstract execute(setStateFunctions: Dispatch<SetStateAction<any>>,
     onComplete?: () => void): void;
-  abstract interrupt(): void;
+  interrupt(): void { };
+
 }
 
 export abstract class AddCommand extends Command { }

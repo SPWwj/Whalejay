@@ -56,7 +56,7 @@ export class ChatStreamCommand extends AiCommand {
                     messages: [
                         {
                             role: "user",
-                            content: `use hello to write a 500 word essay`,
+                            content: this.userInput,
                         },
                     ],
                     stream: true,
@@ -73,6 +73,8 @@ export class ChatStreamCommand extends AiCommand {
             const decoder = new TextDecoder("utf-8");
             let result = "";
 
+            let buffer = "";
+
             while (true) {
                 const { done, value } = await reader.read();
 
@@ -80,33 +82,38 @@ export class ChatStreamCommand extends AiCommand {
                     appReply.text = result;
                     setStateFunctions((prevMessages) =>
                         prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
-                    );
-                    return;
+                    ); return;
                 }
                 const valueString = decoder.decode(value);
-                // console.log(valueString);
 
-                const jsonValues = valueString.split("\n\n");
+                buffer += valueString;
 
-                for (const jsonValueData of jsonValues) {
-                    const trimmedJsonValueData = jsonValueData.trim();
-
-                    if (trimmedJsonValueData.startsWith("data: ")) {
-                        const jsonValueString = trimmedJsonValueData.substring(6).trim();
-                        if (jsonValueString.startsWith("[DONE]")) {
-                            continue;
-                        }
-                        const jsonValue = JSON.parse(jsonValueString);
-                        const content = jsonValue.choices?.[0]?.delta?.content;
-
-                        if (content) {
-                            result += content;
-                            appReply.text = result;
-                            setStateFunctions((prevMessages) =>
-                                prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
-                            );
-                        }
+                let start = buffer.indexOf("data: ");
+                while (start >= 0) {
+                    const end = buffer.indexOf("\n\n", start);
+                    if (end < 0) {
+                        break;
                     }
+
+                    const jsonString = buffer.substring(start + 6, end).trim();
+                    // console.log(jsonString)
+                    if (jsonString.startsWith("[DONE]")) {
+                        break;
+                    }
+
+                    const jsonValue = JSON.parse(jsonString);
+                    const content = jsonValue.choices?.[0]?.delta?.content;
+
+                    if (content) {
+                        result += content;
+                        appReply.text = result;
+                        setStateFunctions((prevMessages) =>
+                            prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
+                        );
+                    }
+
+                    buffer = buffer.substring(end + 2);
+                    start = buffer.indexOf("data: ");
                 }
             }
         } catch (error) {

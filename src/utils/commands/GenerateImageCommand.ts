@@ -25,7 +25,7 @@ export class GenerateImageCommand extends AiCommand {
         this.userInput = userInput;
     }
 
-    async execute(setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>): Promise<void> {
+    async execute(setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>, onComplete?: () => void): Promise<void> {
         try {
             const sanitizedMessage = this.userInput.replace(/[\n\r]+/g, " ");
 
@@ -72,10 +72,10 @@ export class GenerateImageCommand extends AiCommand {
                 text: "出错啦",
             };
             setStateFunctions((prevMessages) => [...prevMessages, appReply]);
+        } finally {
+            onComplete?.();
         }
 
     }
-    interrupt(): void {
-        throw new Error("Method not implemented.");
-    }
+
 }

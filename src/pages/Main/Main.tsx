@@ -29,15 +29,14 @@ const Main: React.FC = () => {
 	const chatContainerRef = React.useRef<HTMLDivElement>(null);
 	const commandRef = useRef<Command | null>(null);
 
-	const wakeCommand = useMemo(
-		() => new WakeupCommand(setIsAlive, setMessages),
-		[setIsAlive, setMessages]
-	);
+	const wakeCommand = useMemo(() => new WakeupCommand(), []);
 
 	useEffect(() => {
 		// Handle checking website status
 		const checkWebsiteStatus = async () => {
-			wakeCommand.execute();
+			await wakeCommand.execute(setMessages, () => {
+				setIsAlive(true);
+			});
 		};
 
 		if (!hasExecutedCheck.current) {
@@ -52,21 +51,23 @@ const Main: React.FC = () => {
 		}
 	}, [isAlive, messages, wakeCommand]);
 
-	const handleSendMessage = (message: string) => {
+	const handleSendMessage = async (message: string) => {
 		// Update the messages state with the new user message
 		setMessages((prevMessages) => [
 			...prevMessages,
 			{ id: uuidv4(), type: MessageType.User, text: message },
 		]);
 		if (isAlive === false) {
-			wakeCommand.execute();
+			await wakeCommand.execute(setMessages, () => {
+				setIsAlive(true);
+			});
 		} else {
+			setIsStreaming(true);
 			const command = CommandPipeline.process(message);
 			command?.execute(setMessages, () => {
 				setIsStreaming(false);
 			});
 			commandRef.current = command;
-			setIsStreaming(true);
 		}
 	};
 
