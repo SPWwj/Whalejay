@@ -4,11 +4,15 @@ import "./UserInput.scss";
 interface UserInputProps {
 	placeholder?: string;
 	onSend: (message: string) => void;
+	isStreaming?: boolean;
+	onStop?: () => void;
 }
 
 const UserInput: React.FC<UserInputProps> = ({
 	placeholder = "Type your message...",
 	onSend,
+	isStreaming,
+	onStop,
 }) => {
 	const [message, setMessage] = useState("");
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -18,8 +22,12 @@ const UserInput: React.FC<UserInputProps> = ({
 	};
 
 	const handleButtonClick = () => {
-		onSend(message);
-		setMessage("");
+		if (isStreaming) {
+			onStop?.();
+		} else {
+			onSend(message);
+			setMessage("");
+		}
 	};
 
 	const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -46,9 +54,8 @@ const UserInput: React.FC<UserInputProps> = ({
 				onChange={handleInputChange}
 				onKeyDown={handleKeyPress}
 			/>
-
 			<button className="send-button" onClick={handleButtonClick}>
-				Send
+				{isStreaming ? "Stop" : "Send"}
 			</button>
 		</div>
 	);

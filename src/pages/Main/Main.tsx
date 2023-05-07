@@ -12,10 +12,13 @@ import { IChatMessage } from "../../model/IChatMessage";
 import { AWAKING_START_NOTICE } from "../../text/text";
 import CommandPipeline from "../../utils/Pipeline/CommandPipeline";
 import { WakeupCommand } from "../../utils/commands/WakeupCommand";
+import { Command } from "../../utils/commands/Command";
 
 const Main: React.FC = () => {
 	const [isAlive, setIsAlive] = useState(false);
 	const hasExecutedCheck = useRef(false);
+	const [isStreaming, setIsStreaming] = useState(false);
+
 	const [messages, setMessages] = useState<IChatMessage[]>([
 		{
 			id: uuidv4(),
@@ -24,6 +27,7 @@ const Main: React.FC = () => {
 		},
 	]);
 	const chatContainerRef = React.useRef<HTMLDivElement>(null);
+	const commandRef = useRef<Command | null>(null);
 
 	const wakeCommand = useMemo(
 		() => new WakeupCommand(setIsAlive, setMessages),
@@ -48,7 +52,7 @@ const Main: React.FC = () => {
 		}
 	}, [isAlive, messages, wakeCommand]);
 
-	const handleSendMessage = async (message: string) => {
+	const handleSendMessage = (message: string) => {
 		// Update the messages state with the new user message
 		setMessages((prevMessages) => [
 			...prevMessages,
@@ -58,7 +62,11 @@ const Main: React.FC = () => {
 			wakeCommand.execute();
 		} else {
 			const command = CommandPipeline.process(message);
-			command?.execute(setMessages);
+			command?.execute(setMessages, () => {
+				setIsStreaming(false);
+			});
+			commandRef.current = command;
+			setIsStreaming(true);
 		}
 	};
 
@@ -69,6 +77,14 @@ const Main: React.FC = () => {
 			.findIndex((msg) => msg.type === type);
 		const totalCount = messages.length;
 		return totalCount - index - 1 === latestIndexForType;
+	};
+
+	const handleStopButtonClick = () => {
+		// Stop the stream
+		if (commandRef.current) {
+			commandRef.current.interrupt();
+			commandRef.current = null;
+		}
 	};
 
 	return (
@@ -97,7 +113,11 @@ const Main: React.FC = () => {
 					))}
 				</div>
 			</div>
-			<UserInput onSend={handleSendMessage} />
+			<UserInput
+				onSend={handleSendMessage}
+				onStop={handleStopButtonClick}
+				isStreaming={isStreaming}
+			/>
 		</div>
 	);
 };

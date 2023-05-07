@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 import { AiCommand } from "./Command";
-import { baseUrl } from "../../api/Api";
+import { gptImageUrl } from "../../api/Api";
 import { MessageType } from "../../components/MessageCard/MessageCard";
 import { IChatMessage } from "../../model/IChatMessage";
 import { v4 } from "uuid";
 
 export class GenerateImageCommand extends AiCommand {
+
     private userInput: string;
 
     static Create(userInput: string): GenerateImageCommand | null {
@@ -23,6 +24,7 @@ export class GenerateImageCommand extends AiCommand {
         super();
         this.userInput = userInput;
     }
+
     async execute(setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>): Promise<void> {
         try {
             const sanitizedMessage = this.userInput.replace(/[\n\r]+/g, " ");
@@ -33,7 +35,7 @@ export class GenerateImageCommand extends AiCommand {
                 size: "512x512", // Image size
             };
 
-            const response = await fetch(`${baseUrl}/image`, {
+            const response = await fetch(gptImageUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -71,5 +73,9 @@ export class GenerateImageCommand extends AiCommand {
             };
             setStateFunctions((prevMessages) => [...prevMessages, appReply]);
         }
+
+    }
+    interrupt(): void {
+        throw new Error("Method not implemented.");
     }
 }

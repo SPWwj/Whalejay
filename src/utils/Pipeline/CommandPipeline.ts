@@ -1,4 +1,4 @@
-import { ChatCommand } from "../commands/ChatCommand";
+import { ChatStreamCommand } from "../commands/ChatStreamCommand";
 import { Command } from "../commands/Command";
 import { GenerateImageCommand } from "../commands/GenerateImageCommand";
 import { TextToSpeechCommand } from "../commands/TextToSpeechCommand";
@@ -9,7 +9,7 @@ export default class CommandPipeline {
     return (
       GenerateImageCommand.Create(userInput) ||
       TextToSpeechCommand.Create(userInput) ||
-      ChatCommand.Create(userInput)
+      ChatStreamCommand.Create(userInput)
     );
   }
 }

@@ -48,5 +48,9 @@ export class WakeupCommand extends Command {
             );
             this.setIsAlive(true);
         }
+
+    }
+    interrupt(): void {
+        throw new Error("Method not implemented.");
     }
 }
