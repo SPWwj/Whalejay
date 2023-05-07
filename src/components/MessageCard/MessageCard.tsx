@@ -31,7 +31,10 @@ const MessageCard: React.FC<IMessageCardProps> = ({
 			</div>
 
 			<div className="message-card__content">
-				<p className="message-card__text">{message}</p>
+				<p
+					className="message-card__text"
+					dangerouslySetInnerHTML={{ __html: message }}
+				></p>
 				{additionalInfo && (
 					<div className="message-card__additional-content">
 						{additionalInfo && additionalInfo.type === "image" && (
