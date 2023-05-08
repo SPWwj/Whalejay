@@ -4,6 +4,7 @@ import { gptImageUrl } from "../../api/Api";
 import { MessageType } from "../../components/MessageCard/MessageCard";
 import { IChatMessage } from "../../model/IChatMessage";
 import { v4 } from "uuid";
+import placeholderImage from "../../assets/images/placeholder.png";
 
 export class GenerateImageCommand extends AiCommand {
 
@@ -26,8 +27,19 @@ export class GenerateImageCommand extends AiCommand {
     }
 
     async execute(setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>, onComplete?: () => void): Promise<void> {
+        let appReply: IChatMessage = {
+            id: v4(),
+            type: MessageType.App,
+            text: "Generating Image...:",
+            additionalInfo: {
+                type: "image",
+                content: placeholderImage
+            },
+        };
         try {
             const sanitizedMessage = this.userInput.replace(/[\n\r]+/g, " ");
+
+            setStateFunctions((prevMessages) => [...prevMessages, appReply]);
 
             const requestBody = {
                 prompt: encodeURIComponent(sanitizedMessage), // Replace with the desired prompt
@@ -45,34 +57,21 @@ export class GenerateImageCommand extends AiCommand {
 
             if (response.ok) {
                 const responseData = await response.json();
-                const appReply: IChatMessage = {
-                    id: v4(),
-                    type: MessageType.App,
-                    text: "Here is the generated image:",
-                    additionalInfo: {
-                        type: "image",
-                        content: responseData.data[0].url, // Assuming the API returns an array with image URLs
-                    },
-                };
-                setStateFunctions((prevMessages) => [...prevMessages, appReply]);
+                appReply.text = "Here is the generated image:";
+                if (appReply.additionalInfo && appReply.additionalInfo.content) {
+                    appReply.additionalInfo.content = responseData.data[0].url;
+                }
             } else {
-                console.error("Error fetching data from API:", response.status);
-                const appReply: IChatMessage = {
-                    id: v4(),
-                    type: MessageType.App,
-                    text: "出错啦",
-                };
-                setStateFunctions((prevMessages) => [...prevMessages, appReply]);
+                appReply.text = "出错啦";
+
             }
         } catch (error) {
-            console.error("Error fetching data from API:", error);
-            const appReply: IChatMessage = {
-                id: v4(),
-                type: MessageType.App,
-                text: "出错啦",
-            };
-            setStateFunctions((prevMessages) => [...prevMessages, appReply]);
+            appReply.text = "出错啦";
+
         } finally {
+            setStateFunctions((prevMessages) =>
+                prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
+            );
             onComplete?.();
         }
 

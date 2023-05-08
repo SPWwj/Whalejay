@@ -4,6 +4,7 @@ import { IChatMessage } from '../../model/IChatMessage';
 import { MessageType } from '../../components/MessageCard/MessageCard';
 import { v4 } from 'uuid';
 import { gptChatStreamUrl } from '../../api/Api';
+import { json } from 'stream/consumers';
 
 export class ChatStreamCommand extends AiCommand {
     private userInput: string;
@@ -40,7 +41,12 @@ export class ChatStreamCommand extends AiCommand {
             this.abortController = null;
         }
     }
-
+    private concatUint8Arrays = (a: Uint8Array, b: Uint8Array) => {
+        const result = new Uint8Array(a.length + b.length);
+        result.set(a, 0);
+        result.set(b, a.length);
+        return result;
+    };
 
     private fetchData = async (appReply: IChatMessage, setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>, onComplete?: () => void) => {
         try {
@@ -49,7 +55,7 @@ export class ChatStreamCommand extends AiCommand {
             const response = await fetch(gptChatStreamUrl, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     model: "gpt-3.5-turbo",
@@ -72,49 +78,38 @@ export class ChatStreamCommand extends AiCommand {
             const reader = response.body.getReader();
             const decoder = new TextDecoder("utf-8");
             let result = "";
+            let jsonString = "";
 
-            let buffer = "";
 
             while (true) {
                 const { done, value } = await reader.read();
 
                 if (done) {
-                    appReply.text = result;
-                    setStateFunctions((prevMessages) =>
-                        prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
-                    ); return;
+                    return;
                 }
-                const valueString = decoder.decode(value);
+                const valueString = decoder.decode(value, { stream: true });
+                const splitValue = valueString.split("\n\n");
 
-                buffer += valueString;
+                splitValue.forEach(dataString => {
 
-                let start = buffer.indexOf("data: ");
-                while (start >= 0) {
-                    const end = buffer.indexOf("\n\n", start);
-                    if (end < 0) {
-                        break;
+                    if (dataString.startsWith("data: ") && jsonString !== "") {
+                        const jsonData = jsonString.substring(6).trim();
+                        const jsonValue = JSON.parse(jsonData);
+                        const content = jsonValue.choices?.[0]?.delta?.content;
+                        if (content) {
+                            result += content;
+                            appReply.text = result;
+                            setStateFunctions((prevMessages) =>
+                                prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
+                            );
+                        }
+                        jsonString = "";
+
                     }
+                    jsonString += dataString;
+                });
 
-                    const jsonString = buffer.substring(start + 6, end).trim();
-                    // console.log(jsonString)
-                    if (jsonString.startsWith("[DONE]")) {
-                        break;
-                    }
 
-                    const jsonValue = JSON.parse(jsonString);
-                    const content = jsonValue.choices?.[0]?.delta?.content;
-
-                    if (content) {
-                        result += content;
-                        appReply.text = result;
-                        setStateFunctions((prevMessages) =>
-                            prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
-                        );
-                    }
-
-                    buffer = buffer.substring(end + 2);
-                    start = buffer.indexOf("data: ");
-                }
             }
         } catch (error) {
             // Check if the error is an AbortError

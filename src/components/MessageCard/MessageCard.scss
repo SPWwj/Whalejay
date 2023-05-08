@@ -1,7 +1,7 @@
 .message-card {
 	display: flex;
-	align-items: flex-start; // Updated from center to flex-start
-	margin-bottom: 2rem;
+	align-items: flex-end; // Updated from center to flex-start
+	margin-top: 2rem;
 }
 
 .message-card--user {
@@ -35,7 +35,7 @@
 }
 
 .message-card--user .message-card__content {
-	align-items: flex-end;
+	align-items: end;
 	margin-left: 0;
 }
 
