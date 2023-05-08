@@ -4,7 +4,6 @@ import { IChatMessage } from '../../model/IChatMessage';
 import { MessageType } from '../../components/MessageCard/MessageCard';
 import { v4 } from 'uuid';
 import { gptChatStreamUrl } from '../../api/Api';
-import { json } from 'stream/consumers';
 
 export class ChatStreamCommand extends AiCommand {
     private userInput: string;
@@ -41,12 +40,29 @@ export class ChatStreamCommand extends AiCommand {
             this.abortController = null;
         }
     }
-    private concatUint8Arrays = (a: Uint8Array, b: Uint8Array) => {
-        const result = new Uint8Array(a.length + b.length);
-        result.set(a, 0);
-        result.set(b, a.length);
-        return result;
-    };
+    private processDataString(
+        dataString: string,
+        jsonString: string,
+        result: string,
+        appReply: IChatMessage,
+        setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>
+    ): { jsonString: string; result: string } {
+        if (dataString.startsWith("data: ") && jsonString !== "") {
+            const jsonData = jsonString.substring(6).trim();
+            const jsonValue = JSON.parse(jsonData);
+            const content = jsonValue.choices?.[0]?.delta?.content;
+            if (content) {
+                result += content;
+                appReply.text = result;
+                setStateFunctions((prevMessages) =>
+                    prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
+                );
+            }
+            jsonString = "";
+        }
+        jsonString += dataString;
+        return { jsonString, result };
+    }
 
     private fetchData = async (appReply: IChatMessage, setStateFunctions: Dispatch<SetStateAction<IChatMessage[]>>, onComplete?: () => void) => {
         try {
@@ -90,25 +106,17 @@ export class ChatStreamCommand extends AiCommand {
                 const valueString = decoder.decode(value, { stream: true });
                 const splitValue = valueString.split("\n\n");
 
-                splitValue.forEach(dataString => {
-
-                    if (dataString.startsWith("data: ") && jsonString !== "") {
-                        const jsonData = jsonString.substring(6).trim();
-                        const jsonValue = JSON.parse(jsonData);
-                        const content = jsonValue.choices?.[0]?.delta?.content;
-                        if (content) {
-                            result += content;
-                            appReply.text = result;
-                            setStateFunctions((prevMessages) =>
-                                prevMessages.map((msg) => (msg.id === appReply.id ? appReply : msg))
-                            );
-                        }
-                        jsonString = "";
-
-                    }
-                    jsonString += dataString;
-                });
-
+                for (const dataString of splitValue) {
+                    const { jsonString: newJsonString, result: newResult } = this.processDataString(
+                        dataString,
+                        jsonString,
+                        result,
+                        appReply,
+                        setStateFunctions
+                    );
+                    jsonString = newJsonString;
+                    result = newResult;
+                }
 
             }
         } catch (error) {

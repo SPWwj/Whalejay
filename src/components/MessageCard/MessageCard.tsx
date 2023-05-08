@@ -23,9 +23,14 @@ const MessageCard: React.FC<IMessageCardProps> = ({
 	const handleImageLoad = () => {
 		setImageLoaded(true);
 	};
+
+	const handleUserInfoClick = () => {
+		console.log("User info clicked");
+		// You can add any functionality you want to execute when the user info is clicked
+	};
 	return (
 		<div className={`message-card ${messageClass} ${className || ""}`}>
-			<div className="message-card__user-info">
+			<div className="message-card__user-info" onClick={handleUserInfoClick}>
 				<img className="message-card__image" src={imageSrc} alt={name} />
 				<span className="message-card__name">{name}</span>
 			</div>

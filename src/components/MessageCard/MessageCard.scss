@@ -63,12 +63,24 @@
 	border: 1px solid red;
 }
 .additional-content__image {
-	max-width: 200px;
-	max-height: 200px;
+	width: 200px;
+	height: 200px;
 	align-self: baseline;
 }
 .command {
 	font-weight: bold;
 	color: blue;
 	white-space: nowrap;
+}
+.message-card__user-info {
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.message-card__user-info:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.message-card__user-info:active {
+	transform: scale(0.5);
+	transition: transform 0.5s;
 }
