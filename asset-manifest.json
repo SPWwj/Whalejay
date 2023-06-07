@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Whalejay/static/css/main.ee31dd19.css",
-    "main.js": "/Whalejay/static/js/main.ece515fd.js",
+    "main.js": "/Whalejay/static/js/main.61f30ade.js",
     "static/js/703.ce568a4c.chunk.js": "/Whalejay/static/js/703.ce568a4c.chunk.js",
     "static/js/598.7e0a8246.chunk.js": "/Whalejay/static/js/598.7e0a8246.chunk.js",
     "static/js/787.66f3dcfd.chunk.js": "/Whalejay/static/js/787.66f3dcfd.chunk.js",
@@ -10,13 +10,13 @@
     "static/media/openai-logo.jpg": "/Whalejay/static/media/openai-logo.06b4a2db7484dd6548f9.jpg",
     "index.html": "/Whalejay/index.html",
     "main.ee31dd19.css.map": "/Whalejay/static/css/main.ee31dd19.css.map",
-    "main.ece515fd.js.map": "/Whalejay/static/js/main.ece515fd.js.map",
+    "main.61f30ade.js.map": "/Whalejay/static/js/main.61f30ade.js.map",
     "703.ce568a4c.chunk.js.map": "/Whalejay/static/js/703.ce568a4c.chunk.js.map",
     "598.7e0a8246.chunk.js.map": "/Whalejay/static/js/598.7e0a8246.chunk.js.map",
     "787.66f3dcfd.chunk.js.map": "/Whalejay/static/js/787.66f3dcfd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ee31dd19.css",
-    "static/js/main.ece515fd.js"
+    "static/js/main.61f30ade.js"
   ]
 }
